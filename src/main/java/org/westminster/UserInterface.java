@@ -10,9 +10,9 @@ public class UserInterface {
     
     public UserInterface(Scanner scanner) {
         this.waitingList = new WaitingList();
-        this.queueOne = new FoodQueue(2, new ArrayList<>());
-        this.queueTwo = new FoodQueue(3, new ArrayList<>());
-        this.queueThree = new FoodQueue(5, new ArrayList<>());
+        this.queueOne = new FoodQueue(2);
+        this.queueTwo = new FoodQueue(3);
+        this.queueThree = new FoodQueue(5);
         this.scanner = scanner;
     }
 
@@ -42,7 +42,7 @@ public class UserInterface {
     }
 
     public void printEmptyQueues() {
-        ArrayList<FoodQueue> allQueues = getAllQueues();
+        FoodQueue[] allQueues = getAllQueues();
 
         System.out.println("\t*******************");
         System.out.println("\t* Empty Cashiers  *");
@@ -80,12 +80,12 @@ public class UserInterface {
         return (queue.getElementAt(index) != null);
     }
 
-    private ArrayList<FoodQueue> getAllQueues() {
-        ArrayList<FoodQueue> allQueues = new ArrayList<>();
+    private FoodQueue[] getAllQueues() {
+        FoodQueue[] allQueues = new FoodQueue[3];
 
-        allQueues.add(this.queueOne);
-        allQueues.add(this.queueTwo);
-        allQueues.add(this.queueThree);
+        allQueues[0] = this.queueOne;
+        allQueues[1] = this.queueTwo;
+        allQueues[2] = this.queueThree;
 
         return allQueues;
     }

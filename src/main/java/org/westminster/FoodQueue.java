@@ -5,16 +5,12 @@ import java.util.ArrayList;
 public class FoodQueue {
     private int limit;
     private int profit;
-    private ArrayList<Customer> queue; // Convert to an Array instead
+    private Customer[] queue;
 
-    public FoodQueue(int limit, ArrayList<Customer> queue) {
+    public FoodQueue(int limit) {
         this.limit = limit;
-        this.queue = queue;
+        this.queue = new Customer[limit];
         this.profit = 0;
-
-        for (int i = 0; i < this.limit; i++) {
-            this.queue.add(null);
-        }
     }
 
     public int getSize() {
@@ -26,7 +22,7 @@ public class FoodQueue {
     }
 
     public Customer getElementAt(int index) {
-        return queue.get(index);
+        return this.queue[index];
     }
 
     public boolean hasEmptySlots() {
