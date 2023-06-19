@@ -29,7 +29,6 @@ public class WaitingList {
 
     public void addToList(Customer customer) {
         if (this.isFull()) {
-            System.out.println("Error! Waiting list full!");
             return;
         }
 

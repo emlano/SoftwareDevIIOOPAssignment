@@ -1,20 +1,16 @@
 package org.westminster;
 
-import java.util.ArrayList;
-
 public class FoodQueue {
-    private int limit;
     private int profit;
     private Customer[] queue;
 
     public FoodQueue(int limit) {
-        this.limit = limit;
         this.queue = new Customer[limit];
         this.profit = 0;
     }
 
     public int getSize() {
-        return this.limit;
+        return this.queue.length;
     }
 
     public int getProfit() {
@@ -26,8 +22,8 @@ public class FoodQueue {
     }
 
     public boolean hasEmptySlots() {
-        for (int i = 0; i < this.limit; i++) {
-            if (this.queue.get(i) == null) {
+        for (int i = 0; i < this.getSize(); i++) {
+            if (this.queue[i] == null) {
                 return true;
             }
         }
@@ -36,27 +32,26 @@ public class FoodQueue {
     }
 
     public void addToQueue(Customer customer) {
-        for (int i = 0; i < this.queue.size(); i++) {
-            if (queue.get(i) == null)    {
-                queue.set(i, customer);
+        for (int i = 0; i < this.getSize(); i++) {
+            if (queue[i] == null)    {
+                queue[i] = customer;
             }
         }
     }
 
     public void removeFromQueue(int index) {
-        this.queue.remove(index);
-        this.queue.add(null);
+        this.queue[index] = null;
+        this.moveForward();
     }
 
     public void removeServed(int order) {
         this.profit += order * 650;
         this.removeFromQueue(0);
-        this.queue.add(null);
     }
 
     public String toString() {
         String outString = "";
-        outString  = "Queue limit: " + this.limit + "\n";
+        outString  = "Queue limit: " + this.getSize() + "\n";
         outString += "Queue profit: " + this.profit + "\n";
         outString += "Customers: " + "\n";
 
@@ -65,5 +60,14 @@ public class FoodQueue {
         }
 
         return outString;
+    }
+
+    private void moveForward() {
+        for (int i = 0; i < this.getSize() - 1; i++) {
+            if (this.queue[i] == null && this.queue[i + 1] != null) {
+                this.queue[i] = this.queue[i + 1];
+                this.queue[i + 1] = null;
+            }
+        }
     }
 }

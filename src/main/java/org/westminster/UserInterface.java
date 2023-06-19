@@ -1,79 +1,135 @@
 package org.westminster;
 
-import java.util.Scanner;
-import java.util.ArrayList;
-
 public class UserInterface {
     private WaitingList waitingList;
     private FoodQueue queueOne, queueTwo, queueThree;
-    private Scanner scanner;
+    private int burgerStock;
     
-    public UserInterface(Scanner scanner) {
+    public UserInterface() {
         this.waitingList = new WaitingList();
         this.queueOne = new FoodQueue(2);
         this.queueTwo = new FoodQueue(3);
         this.queueThree = new FoodQueue(5);
-        this.scanner = scanner;
+        this.burgerStock = 0;
     }
 
     public void printAllQueues() {
-        ArrayList<FoodQueue> allQueues = getAllQueues();
+        FoodQueue[] allQueues = this.getAllQueues();
+        System.out.println();
 
-        System.out.println("\t*****************");
-        System.out.println("\t*   Cashiers    *");
-        System.out.println("\t*****************");
+        System.out.println("      *****************");
+        System.out.println("      *   Cashiers    *");
+        System.out.println("      *****************");
 
         for (int i = 0; i < 5; i++) {
+            System.out.print("        ");
+
             for (int j = 0; j < 3; j++) {
-                if (allQueues.get(j).getSize() > i) {
-                    if (customerInPosition(allQueues.get(j), i)) {
-                        System.out.print("\tO");
+                if (i < allQueues[j].getSize()) {
+                    if (this.customerInPosition(allQueues[j], i)) {
+                        System.out.print("O");
                     
                     } else {
-                        System.out.print("\tX");
+                        System.out.print("X");
                     }
                 
                 } else {
-                    System.out.print("\t ");
+                    System.out.print(" ");
                 }
+
+                System.out.print("     ");
             }
             System.out.println();
         }
+
+        System.out.println();
+        System.out.println("O - Occupied, X - Not Occupied");
+        System.out.println();
     }
 
     public void printEmptyQueues() {
-        FoodQueue[] allQueues = getAllQueues();
+        FoodQueue[] allQueues = this.getAllQueues();
+        System.out.println();
 
-        System.out.println("\t*******************");
-        System.out.println("\t* Empty Cashiers  *");
-        System.out.println("\t*******************");
+        System.out.println("     *******************");
+        System.out.println("     *  Empty Cashiers *");
+        System.out.println("     *******************");
 
         for (int i = 0; i < 5; i++) {
+            System.out.print("        ");
+
             for (int j = 0; j < 3; j++) {
-                if (allQueues.get(j).getSize() > i && allQueues.get(j).hasEmptySlots()) {
-                    if (customerInPosition(allQueues.get(j), i)) {
-                        System.out.print("\t O");
+                if (i < allQueues[j].getSize() && allQueues[j].hasEmptySlots()) {
+                    if (this.customerInPosition(allQueues[j], i)) {
+                        System.out.print("O");
                     
                     } else {
-                        System.out.print("\t X");
+                        System.out.print("X");
                     }
                 
                 } else {
-                    System.out.print("\t  ");
+                    System.out.print(" ");
                 }
+
+                System.out.print("     ");
             }
             System.out.println();
         }
+        System.out.println();
+        System.out.println("O - Occupied, X - Not Occupied");
+        System.out.println();
     }
 
     public void addCustomer(Customer customer) {
-        if (queueOne.hasEmptySlots()) {
-            queueOne.addToQueue(customer);
-        } else if (queueTwo.hasEmptySlots()) {
-            queueTwo.addToQueue(customer);
-        } else if (queueThree.hasEmptySlots()) {
-            queueThree.addToQueue(customer);
-        } else {}
+        FoodQueue[] allQueues = this.getAllQueues();
+
+        for (FoodQueue i : allQueues) {
+            if (i.hasEmptySlots()) {
+                i.addToQueue(customer);
+                System.out.println("( $ ) Successfully added to queue!");
+                return;
+            }
+        }
+
+        System.out.println("( ! ) Warning! All queues full! Attempting to Add to waiting list!");
+
+        if (!this.waitingList.isFull()) {
+            this.waitingList.addToList(customer);
+            System.out.println("( $ ) Successfully added to waiting list!");
+            return;
+        }
+
+        System.out.println("( ! ) Error! Unable to add customer! Waiting list full!");
+    }
+
+    public void removeFromQueue(int queue, int row) {
+        FoodQueue[] allQueues = this.getAllQueues();
+
+        if (this.customerInPosition(allQueues[queue], row)) {
+            allQueues[queue].removeFromQueue(row);
+        
+        } else {
+            System.out.println("( ! ) Error! No customer at position!");
+        }
+    }
+
+    public void removeServedCustomer(int queue) {
+        FoodQueue[] allQueues = this.getAllQueues();
+
+        if (this.customerInPosition(allQueues[queue], 0)) {
+            int customerOrder = allQueues[queue].getElementAt(0).getOrder();
+            
+            if (this.burgerStock > customerOrder) {
+                allQueues[queue].removeServed(customerOrder);
+                this.burgerStock -= customerOrder;
+            
+            } else {
+                System.out.println("( ! ) Error! Not enough burgers to fulfill customer's order!");
+            }
+        
+        } else {
+            System.out.println("( ! ) Error! No customers in queue!");
+        }
     }
 
     private boolean customerInPosition(FoodQueue queue, int index) {
