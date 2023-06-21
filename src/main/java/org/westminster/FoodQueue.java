@@ -35,6 +35,7 @@ public class FoodQueue {
         for (int i = 0; i < this.getSize(); i++) {
             if (queue[i] == null)    {
                 queue[i] = customer;
+                return;
             }
         }
     }
@@ -49,19 +50,6 @@ public class FoodQueue {
         this.removeFromQueue(0);
     }
 
-    public String toString() {
-        String outString = "";
-        outString  = "Queue limit: " + this.getSize() + "\n";
-        outString += "Queue profit: " + this.profit + "\n";
-        outString += "Customers: " + "\n";
-
-        for (Customer i : this.queue) {
-            outString += "\t" + i.toString();
-        }
-
-        return outString;
-    }
-
     private void moveForward() {
         for (int i = 0; i < this.getSize() - 1; i++) {
             if (this.queue[i] == null && this.queue[i + 1] != null) {
@@ -69,5 +57,20 @@ public class FoodQueue {
                 this.queue[i + 1] = null;
             }
         }
+    }
+
+    public String toString() {
+        String outString = "";
+        outString  = "Queue limit: " + this.getSize() + "\n";
+        outString += "Queue profit: " + this.profit + "\n";
+        outString += "Customers: " + "\n";
+
+        for (Customer i : this.queue) {
+            if (i != null) {
+                outString += "\t" + i.toString() + "\n";
+            }
+        }
+
+        return outString;
     }
 }

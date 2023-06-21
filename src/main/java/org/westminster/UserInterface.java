@@ -1,5 +1,9 @@
 package org.westminster;
 
+import java.util.ArrayList;
+
+import javax.management.openmbean.ArrayType;
+
 public class UserInterface {
     private WaitingList waitingList;
     private FoodQueue queueOne, queueTwo, queueThree;
@@ -130,6 +134,48 @@ public class UserInterface {
         } else {
             System.out.println("( ! ) Error! No customers in queue!");
         }
+    }
+
+    public void viewSortedCustomers() {
+        ArrayList<String> customerList = this.getAllCustomerNames();
+
+
+        for (int j = 0; j < customerList.size(); j++) {
+            boolean swapped = false;
+            for (int i = 1; i < customerList.size(); i++) {
+                if (customerList.get(i).compareTo(customerList.get(i - 1)) < 0) {
+                    String temp = customerList.get(i - 1);
+                    customerList.set(i - 1, customerList.get(i));
+                    customerList.set(i, temp);
+                    swapped = true;
+                }
+
+                if (!swapped) {
+                    break;
+                }
+            }
+        }
+
+        System.out.println("( $ ) Displaying customer names sorted alphabetically: ");
+
+        for (String i : customerList) {
+            System.out.println(i);
+        }
+    }
+
+    private ArrayList<String> getAllCustomerNames() {
+        ArrayList<String> customerList = new ArrayList<>();
+        FoodQueue[] allQueues = this.getAllQueues();
+
+        for (FoodQueue i : allQueues) {
+            for (int j = 0; j < i.getSize(); j++) {
+                if (i.getElementAt(j) != null) {
+                    customerList.add(i.getElementAt(j).getFirstName() + " " + i.getElementAt(j).getSecondName());
+                }
+            }
+        }
+
+        return customerList;
     }
 
     private boolean customerInPosition(FoodQueue queue, int index) {
