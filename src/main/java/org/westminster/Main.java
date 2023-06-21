@@ -21,7 +21,6 @@ public class Main {
         ui.addCustomer(B);
         ui.addCustomer(C);
         ui.addCustomer(elf);
-        ui.viewSortedCustomers();
-        ui.printAllQueues();
+        ui.writeToFile();
     }
 }

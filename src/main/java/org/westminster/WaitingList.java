@@ -58,4 +58,12 @@ public class WaitingList {
 
         return customer;
     }
+
+    public int getSize() {
+        return this.size;
+    }
+
+    public Customer getElementAt(int index) {
+        return this.array[index];
+    }
 }

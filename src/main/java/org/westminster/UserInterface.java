@@ -1,8 +1,9 @@
 package org.westminster;
 
 import java.util.ArrayList;
-
-import javax.management.openmbean.ArrayType;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class UserInterface {
     private WaitingList waitingList;
@@ -160,6 +161,40 @@ public class UserInterface {
 
         for (String i : customerList) {
             System.out.println(i);
+        }
+    }
+
+    public void writeToFile() {
+        try {
+            File file = new File("data.txt");
+            FileWriter writer = new FileWriter(file);
+            FoodQueue[] allQueues = this.getAllQueues();
+
+            writer.write(this.burgerStock + "\n");
+            
+            for (FoodQueue i : allQueues) {
+                writer.write(i.getProfit() + "\n");
+            }
+            
+            for (FoodQueue i : allQueues) {
+                for (int j = 0; j < i.getSize(); j++) {
+                    if (i.getElementAt(j) != null) {
+                        writer.write(i.getElementAt(j).toString() + "\n");
+                    }
+                }
+            }
+
+            for (int i = 0; i < this.waitingList.getSize(); i++) {
+                if (this.waitingList.getElementAt(i) != null) {
+                    writer.write(this.waitingList.getElementAt(i).toString() + "\n");
+                }
+            }
+
+            writer.close();
+        
+        } catch (IOException e) {
+            System.out.println("( !!! ) Fatal error occured! :");
+            System.out.println(e.getMessage());
         }
     }
 

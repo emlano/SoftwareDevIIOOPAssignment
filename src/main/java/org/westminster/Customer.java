@@ -24,6 +24,6 @@ public class Customer {
     }
 
     public String toString() {
-        return this.firstName + " " + this.secondName + ", Order: " + this.burgerRequired + " burgers.";
+        return this.firstName + "," + this.secondName + "," + this.burgerRequired;
     }
 }
