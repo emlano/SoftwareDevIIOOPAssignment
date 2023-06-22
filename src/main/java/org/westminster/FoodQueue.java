@@ -17,6 +17,10 @@ public class FoodQueue {
         return this.profit;
     }
 
+    public void setProfit(int profit) {
+        this.profit = profit;
+    }
+
     public Customer getElementAt(int index) {
         return this.queue[index];
     }

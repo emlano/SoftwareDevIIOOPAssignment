@@ -1,9 +1,11 @@
 package org.westminster;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 
 public class UserInterface {
     private WaitingList waitingList;
@@ -196,6 +198,90 @@ public class UserInterface {
             System.out.println("( !!! ) Fatal error occured! :");
             System.out.println(e.getMessage());
         }
+    }
+
+    public void readFromFile() {
+        try {
+            File file = new File("data.txt");
+            Scanner fileScan = new Scanner(file);
+
+            this.burgerStock = Integer.valueOf(fileScan.nextLine());
+            this.queueOne.setProfit(Integer.valueOf(fileScan.nextLine()));
+            this.queueTwo.setProfit(Integer.valueOf(fileScan.nextLine()));
+            this.queueThree.setProfit(Integer.valueOf(fileScan.nextLine()));
+
+            FoodQueue[] allQueues = this.getAllQueues();
+            
+            while (fileScan.hasNextLine()) {
+                boolean added = false;
+                String[] data = fileScan.nextLine().split(",");
+                int order = Integer.valueOf(data[2]);
+
+                Customer customer = new Customer(data[0], data[1], order);
+
+                for (FoodQueue i : allQueues) {
+                    if (i.hasEmptySlots()) {
+                        i.addToQueue(customer);
+                        added = true;
+                        break;
+                    }
+                }
+
+                if (!added && !this.waitingList.isFull()) {
+                    this.waitingList.addToList(customer);
+                
+                } else if (!added) {
+                    System.out.println("( ! ) Error! Inappropriate data in save file! File read failed!");
+                    fileScan.close();
+                    return;
+                }
+            }
+
+            fileScan.close();
+        
+        } catch (FileNotFoundException e) {
+            System.out.println("( ! ) Error! Saved data not found! Please save first!");
+        
+        } catch (NumberFormatException e) {
+            System.out.println("( ! ) Error! Unable to read some values! Possibly corrupted file!");
+        }
+    }
+
+    public void printMenu() {
+        System.out.println();
+        System.out.println(" [#]=========================================[#]");
+        System.out.println(" [#] Foodies Fave Customer Management System [#]");
+        System.out.println(" [#]            Version 0.2.0                [#]");
+        System.out.println(" [#]=========================================[#]");
+        System.out.println();
+        System.out.println("    100 or VFQ -- View all queues");
+        System.out.println("    101 or VEQ -- View all empty queues");
+        System.out.println("    102 or ACQ -- Add customer to queue");
+        System.out.println("    103 or RCQ -- Remove customer from queue");
+        System.out.println("    104 or PCQ -- Remove a served customer");
+        System.out.println("    105 or VCS -- View customers sorted alphabetically");
+        System.out.println("    106 or SPD -- Store program data in file");
+        System.out.println("    107 or LPD -- Load program data from file");
+        System.out.println("    108 or STK -- View remaining burger stock");
+        System.out.println("    109 or AFS -- Add burgers to Stock");
+        System.out.println("    110 or IFQ -- Display income of a queue");
+        System.out.println("    111 or PMN -- Print this menu");
+        System.out.println("    999 or EXT -- Exit program");
+        System.out.println();
+    }
+
+    public int getStock() {
+        return this.burgerStock;
+    }
+
+    public void setStock(int stock) {
+        this.burgerStock += stock;
+    }
+
+    public int getProfit(int queue) {
+        FoodQueue[] allQueues = this.getAllQueues();
+
+        return allQueues[queue].getProfit();
     }
 
     private ArrayList<String> getAllCustomerNames() {
