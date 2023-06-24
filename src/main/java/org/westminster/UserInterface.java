@@ -98,7 +98,7 @@ public class UserInterface {
             }
         }
 
-        System.out.println("( ! ) Warning! All queues full! Attempting to Add to waiting list!");
+        System.out.println("( ! ) Warning! All queues full! Attempting to add to waiting list!");
 
         if (!this.waitingList.isFull()) {
             this.waitingList.addToList(customer);
@@ -114,6 +114,7 @@ public class UserInterface {
 
         if (this.customerInPosition(allQueues[queue], row)) {
             allQueues[queue].removeFromQueue(row);
+            this.getWaitingListCustomer(queue);
         
         } else {
             System.out.println("( ! ) Error! No customer at position!");
@@ -129,6 +130,7 @@ public class UserInterface {
             if (this.burgerStock > customerOrder) {
                 allQueues[queue].removeServed(customerOrder);
                 this.burgerStock -= customerOrder;
+                this.getWaitingListCustomer(queue);
             
             } else {
                 System.out.println("( ! ) Error! Not enough burgers to fulfill customer's order!");
@@ -143,26 +145,21 @@ public class UserInterface {
         ArrayList<String> customerList = this.getAllCustomerNames();
 
 
-        for (int j = 0; j < customerList.size(); j++) {
-            boolean swapped = false;
-            for (int i = 1; i < customerList.size(); i++) {
-                if (customerList.get(i).compareTo(customerList.get(i - 1)) < 0) {
-                    String temp = customerList.get(i - 1);
-                    customerList.set(i - 1, customerList.get(i));
-                    customerList.set(i, temp);
-                    swapped = true;
-                }
-
-                if (!swapped) {
-                    break;
+        for (int i = 0; i < customerList.size(); i++) {
+            for (int j = 1; j < customerList.size(); j++) {
+                if (customerList.get(j).compareTo(customerList.get(j - 1)) < 0) {
+                    String temp = customerList.get(j - 1);
+                    customerList.set(j - 1, customerList.get(j));
+                    customerList.set(j, temp);
                 }
             }
         }
 
-        System.out.println("( $ ) Displaying customer names sorted alphabetically: ");
+        System.out.println("    ( $ ) Displaying customer names sorted alphabetically: ");
+        System.out.println();
 
         for (String i : customerList) {
-            System.out.println(i);
+            System.out.println("        " + i);
         }
     }
 
@@ -192,15 +189,23 @@ public class UserInterface {
                 }
             }
 
+            System.out.println("    ( $ ) Session saved to file!");
             writer.close();
         
         } catch (IOException e) {
-            System.out.println("( !!! ) Fatal error occured! :");
+            System.out.println("( !!! ) Fatal error occurred! :");
             System.out.println(e.getMessage());
         }
     }
 
     public void readFromFile() {
+        FoodQueue[] allQueues = this.getAllQueues();
+
+        if (this.loadedDataFound(allQueues)) {
+            System.out.println("( ! ) Caution! Program storing data! File read stopped to prevent data loss!");
+            return;
+        }
+
         try {
             File file = new File("data.txt");
             Scanner fileScan = new Scanner(file);
@@ -210,8 +215,6 @@ public class UserInterface {
             this.queueTwo.setProfit(Integer.valueOf(fileScan.nextLine()));
             this.queueThree.setProfit(Integer.valueOf(fileScan.nextLine()));
 
-            FoodQueue[] allQueues = this.getAllQueues();
-            
             while (fileScan.hasNextLine()) {
                 boolean added = false;
                 String[] data = fileScan.nextLine().split(",");
@@ -229,20 +232,16 @@ public class UserInterface {
 
                 if (!added && !this.waitingList.isFull()) {
                     this.waitingList.addToList(customer);
-                
-                } else if (!added) {
-                    System.out.println("( ! ) Error! Inappropriate data in save file! File read failed!");
-                    fileScan.close();
-                    return;
                 }
             }
 
+            System.out.println("    ( $ ) Session restored from file!");
             fileScan.close();
-        
+
         } catch (FileNotFoundException e) {
             System.out.println("( ! ) Error! Saved data not found! Please save first!");
-        
-        } catch (NumberFormatException e) {
+
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
             System.out.println("( ! ) Error! Unable to read some values! Possibly corrupted file!");
         }
     }
@@ -311,5 +310,36 @@ public class UserInterface {
         allQueues[2] = this.queueThree;
 
         return allQueues;
+    }
+
+    private void getWaitingListCustomer(int queue) {
+        FoodQueue[] allQueues = this.getAllQueues();
+
+        if (!this.waitingList.isEmpty()) {
+            for (int i = 0; i < allQueues[queue].getSize(); i++) {
+                if (allQueues[queue].getElementAt(i) == null) {
+                    allQueues[queue].addToQueue(this.waitingList.nextCustomer());
+                    System.out.println("    ( $ ) Note: Waiting list customer added to queue!");
+                    return;
+                }
+            }
+        }
+    }
+
+    private boolean loadedDataFound(FoodQueue[] allQueues) {
+        if (this.burgerStock != 0) {
+            return true;
+        }
+
+        for (int i = 0; i < 3; i++) {
+            if (allQueues[i].getElementAt(0) != null) {
+                return true;
+
+            } else if (allQueues[i].getProfit() != 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
