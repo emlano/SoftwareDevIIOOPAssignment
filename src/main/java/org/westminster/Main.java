@@ -149,6 +149,10 @@ public class Main {
 
                 case "111", "PMN" -> { ui.printMenu(); }
 
+                case "112", "GUI" -> {
+                    System.out.println("GUI START");
+                }
+
                 case "999", "EXT" -> {
                     System.out.println("( $ ) Program exiting!");
                     System.out.println();
